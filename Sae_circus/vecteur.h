@@ -1,15 +1,15 @@
 #pragma once
 
-#include "itemvecteur.h"
 
 /**
  * @brief Conteneur stockant des éléments accessibles en
  * fonction de leur position (indice).
  */
+
 typedef struct {
 	int nbElements; ///< Nombre d'éléments présents dans le vecteur.
 	int capacite;	///< Nombre d'éléments maximal du vecteur.
-	ItemV* elements; ///< Tableau (dynamique) de taille <code>capacite</code>.
+	void** elements; ///< Tableau (dynamique) de taille <code>capacite</code>.
 } Vecteur;
 
 /**
@@ -36,7 +36,7 @@ int taille(const Vecteur* v);
  * @param[in] it L'élément devant être ajouté.
  * @return 0 en cas d'échec (manque de mémoire disponible) et 1 en cas de succès.
  */
-int ajouter(Vecteur* v, ItemV it);
+int ajouter(Vecteur* v, void* it);
 
 /**
  * @brief Retourne l'élément d'un vecteur se trouvant à une position donnée.
@@ -46,7 +46,7 @@ int ajouter(Vecteur* v, ItemV it);
  * @pre La valeur de <code>i</code> doit être comprise entre 0 et
  * <code>(taille(v) - 1)</code> (inclus).
  */
-ItemV obtenir(const Vecteur* v, int i);
+void* obtenir(const Vecteur* v, int i);
 
 /**
  * @brief Modifie un élément d'un vecteur.
@@ -56,7 +56,7 @@ ItemV obtenir(const Vecteur* v, int i);
  * @pre La valeur de <code>i</code> doit être comprise entre 0 et
  * <code>(taille(v) - 1)</code> (inclus).
  */
-void modifier(Vecteur* v, int i, ItemV it);
+void modifier(Vecteur* v, int i, void* it);
 
 /**
  * @brief Supprime un élément d'un vecteur.

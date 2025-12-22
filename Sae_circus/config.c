@@ -7,7 +7,7 @@
 #include "config.h"
 
 
-enum { BUFFER_SIZE = 10 };
+enum { BUFFER_SIZE = 64 };
 
 
 
@@ -42,7 +42,7 @@ char* readFullLine(FILE* f) {
 }
 
 
-char** splitLine(char* line) {
+char** splitLineAndCount(char* line, int* count) {
 	
 	char* tmp_ligne = strdup(line);
 	char* element = strtok(tmp_ligne, " \t");
@@ -54,9 +54,11 @@ char** splitLine(char* line) {
 		element = strtok(NULL, " \t");
 		
 	}
+	free(tmp_ligne);
 	
+	*count = n;
 	char** noms = (char**)malloc(n * sizeof(char*));
-
+	
 	tmp_ligne = strdup(line);
 	element = strtok(tmp_ligne, " \t");
 	
@@ -78,31 +80,55 @@ char** splitLine(char* line) {
 
 
 
-int loadConfig(const char* fichier, char*** animaux_out, int* nb_animaux_out, char*** commandes_out, int* nb_commandes_out) {
-
-	if (!fichier || !animaux_out || !nb_animaux_out || !commandes_out || !nb_commandes_out) return -1;
+int loadConfig(const char* fichier, Animaux* a, Commandes* c){
+	if (!fichier || !a || !c) return -1;
 
 	FILE* f = fopen(fichier, "r");
-	if (!f) { fprintf(stderr, "fichier non accessible: %s\n", fichier); return -1; }
+	
 
-	*animaux_out = NULL;
-	*nb_animaux_out = 0;
-	*commandes_out = NULL;
-	*nb_commandes_out = 0;
 
 	char* line = readFullLine(f);
 	if (line) {
-		*animaux_out = splitLine(line, nb_animaux_out);
+		int n = 0;
+		char** noms = splitLineAndCount(line, &n);
+		
+		initAnimaux(a, n);
+		for (int i = 0; i < n; ++i) {
+			ajouterAnimal(a, noms[i]);
+		}
+		
 		free(line);
 	}
+
+	// +++++++++++++++++++++++++++++++++++++++++
 
 	line = readFullLine(f);
 	if (line) {
-		*commandes_out = splitLine(line, nb_commandes_out);
+		int n = 0;
+		char** noms = splitLineAndCount(line, &n);
+		
+		initCommandes(c, n);
+		for (int i = 0; i < n; ++i) {
+			ajouterCommande(c, noms[i]);
+		}
 		free(line);
+
 	}
 
+	//+++++++++++++++++++++++++++++++++++
+
+
 	fclose(f);
+	return 0;
+}
+
+
+int loadJoueurs(Joueurs* joueurs, int nb_joueurs, char** noms) {
+	
+	initJoueurs(joueurs, nb_joueurs);
+	for (int i = 0; i < nb_joueurs; ++i) {
+		ajouterJoueur(joueurs, noms[i]);
+	}
 	return 0;
 }
 

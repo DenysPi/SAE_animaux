@@ -102,6 +102,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,7 +129,6 @@
     <ClInclude Include="commandes.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="game.h" />
-    <ClInclude Include="itemvecteur.h" />
     <ClInclude Include="joueur.h" />
     <ClInclude Include="podium.h" />
     <ClInclude Include="vecteur.h" />

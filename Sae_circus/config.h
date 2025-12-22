@@ -1,11 +1,15 @@
 #pragma once
 #pragma warning(push)
 #pragma warning(disable:4996)
+
+
 #include <stdio.h>
 
+#include "animal.h"
+#include "commandes.h"
+#include "joueur.h"
 
-
-int loadConfig(const char* fichier, char*** animaux_out, int* nb_animaux_out, char*** commandes_out, int* nb_commandes_out);
-char** splitLine(char* line, int* nb);
+int loadJoueurs(Joueurs* joueurs, int nb_joueurs, char** noms);
+int loadConfig(const char* fichier, Animaux* a, Commandes* c);
+char** splitLineAndCount(char* line, int* count);
 char* readFullLine(FILE* f);
-
