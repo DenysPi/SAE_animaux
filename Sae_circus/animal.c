@@ -25,3 +25,20 @@ int ajouterAnimal(Animaux* animaux, const char* nom) {
 Animal* obtenirAnimal(const Animaux* animaux, int i) {
 	return obtenir(animaux, i);
 }
+
+
+int* shuffleAnimaux(int n_animaux) {
+	
+	int* ids = (int*)malloc(sizeof(int) * n_animaux);
+	for (int i = 0; i < n_animaux; ++i) {
+		ids[i] = i;
+	}
+	for (int i = n_animaux - 1; i > 0; --i) {
+		int j = rand() % (i + 1);
+		int tmp = ids[i];
+		ids[i] = ids[j];
+		ids[j] = tmp;
+	}
+	return ids;
+}
+

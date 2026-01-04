@@ -19,3 +19,4 @@ int initAnimaux(Animaux* animaux, int capacite);
 int ajouterAnimal(Animaux* animaux, const char* nom);
 Animal* obtenirAnimal(const Animaux* animaux, int i);
 
+int* shuffleAnimaux(int n_animaux);

@@ -132,3 +132,17 @@ int loadJoueurs(Joueurs* joueurs, int nb_joueurs, char** noms) {
 	return 0;
 }
 
+Podium* max4(Podium* p_b, Podium* p_r, Podium* t_b, Podium* t_r) {
+	Podium* max = p_b->nbElements;
+	if (p_r->nbElements > max) {
+		max = p_r;
+	}
+	if (t_b->nbElements > max) {
+		max = t_b;
+	}
+	if (t_r->nbElements > max) {
+		max = t_r;
+	}
+	return max;
+
+}

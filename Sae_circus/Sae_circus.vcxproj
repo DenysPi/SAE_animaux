@@ -125,21 +125,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="affichage.h" />
     <ClInclude Include="animal.h" />
     <ClInclude Include="commandes.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="cartes.h" />
     <ClInclude Include="joueur.h" />
     <ClInclude Include="podium.h" />
     <ClInclude Include="vecteur.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="affichage.c" />
     <ClCompile Include="animal.c" />
     <ClCompile Include="commandes.c" />
     <ClCompile Include="config.c" />
     <ClCompile Include="game.c" />
+    <ClCompile Include="cartes.c" />
     <ClCompile Include="joueur.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="podium.c" />
     <ClCompile Include="vecteur.c" />
   </ItemGroup>
   <ItemGroup>

@@ -10,6 +10,7 @@
 typedef struct {
 	char* nom;
 	int tour;
+	int points;
 }Joueur;
 
 typedef Vecteur Joueurs;
@@ -20,3 +21,10 @@ Joueur* creerJoueur(const char* nom);
 int initJoueurs(Joueurs* joueurs, int capacite);
 int ajouterJoueur(Joueurs* joueurs, const char* nom);
 Joueur* obtenirJoueur(const Joueurs* joueurs, int i);
+Joueur* obtenirJoueurParNom(const Joueurs* joueurs, const char* nom);
+int peutJouer(const Joueurs* joueurs, char* nom);
+int joueurExiste(const Joueurs* joueurs, char* nom);
+
+void ajouterPointJoueur(Joueurs* joueurs, char* nom_j);
+
+Joueur* lastPerson(Joueurs* joueurs);
