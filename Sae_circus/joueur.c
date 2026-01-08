@@ -7,6 +7,7 @@ Joueur* creerJoueur(const char* nom) {
 	Joueur* j = (Joueur*)malloc(sizeof(Joueur));
 
 	j->tour = 1;
+	j->points = 0;
 	j->nom = (char*)malloc(strlen(nom) + 1);
 	strcpy(j->nom, nom);
 	return j;
@@ -48,6 +49,7 @@ int joueurExiste(const Joueurs* joueurs, char* nom) {
 void ajouterPointJoueur(Joueurs* joueurs,char* nom_j) {
 	Joueur* j = obtenirJoueurParNom(joueurs, nom_j);
 	++j->points;
+	j->tour = 1;
 }
 
 Joueur* lastPerson(Joueurs* joueurs){
@@ -66,4 +68,11 @@ void afficherResultats(Joueurs* joueurs) {
 		printf("%s %d\n", j->nom, j->points);
 	}
 	printf("\n\n");
+}
+
+void remetreTours(Joueurs* joueurs) {
+	for (int i = 0; i < joueurs->nbElements; ++i) {
+		Joueur* j = obtenirJoueur(joueurs, i);
+		j->tour = 1;
+	}
 }

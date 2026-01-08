@@ -1,5 +1,22 @@
 #include "game.h"
 #include "affichage.h"
+
+
+
+
+void distribuerCarteAleatoire(Vecteur* cartes, int nb_animaux, Game* game) {
+	if (!cartes || cartes->nbElements == 0) return;
+	int idx = choisirRandomCarte(cartes);
+	int* arr = (int*)obtenir(cartes, idx); 
+	distrbuerAuxPodiums(arr, nb_animaux, game->podium_b, game->podium_r);
+
+	int idxs = choisirRandomCarte(game->cartes);
+	int* arrs = obtenir(game->cartes, idxs);
+
+	distrbuerAuxPodiums(arrs, game->animaux->nbElements, game->target_b, game->target_r);
+
+}
+
 int initGameConfig(Game* game, const char* fichier, int nb_joueurs, char** noms) {
 	srand((unsigned)time(NULL));
 	game->animaux = NULL;
@@ -18,9 +35,13 @@ int initGameConfig(Game* game, const char* fichier, int nb_joueurs, char** noms)
 	game->podium_r = (Podium*)malloc(sizeof(Podium));
 	game->target_b = (Podium*)malloc(sizeof(Podium));
 	game->target_r = (Podium*)malloc(sizeof(Podium));
-
-	if (loadConfig(fichier, game->animaux, game->commandes) != 0) {
-		printf("Erreur chargement config\n");
+	int resultat = loadConfig(fichier, game->animaux, game->commandes);
+	
+	if (resultat != 0) {
+		if (resultat == 1) {
+			lancementErrorCommande();
+			return -1;
+		}
 		return -1;
 	}
 
@@ -38,28 +59,13 @@ int initGameConfig(Game* game, const char* fichier, int nb_joueurs, char** noms)
 	}
 
 
-	/* ================== initialisation et test des cartes ================== */
 	game->cartes = (Vecteur*)malloc(sizeof(Vecteur));
-	if (!game->cartes || !initVecteur(game->cartes, 1)) {
-		printf("Erreur initialisation cartes\n");
-		/* continuer sans cartes éventuellement */
-		if (game->cartes) { free(game->cartes); game->cartes = NULL; }
-	}
+	initVecteur(game->cartes, 1);
 	genererToutesLesCartes(game->animaux, game->cartes);
 	
-	int idx = choisirRandomCarte(game->cartes);
-	int* arr = obtenir(game->cartes, idx);
-
-	distrbuerAuxPodiums(arr, game->animaux->nbElements, game->podium_b, game->podium_r);
-
-	int idxs = choisirRandomCarte(game->cartes);
-	int* arrs = obtenir(game->cartes, idxs);
-
-	distrbuerAuxPodiums(arrs, game->animaux->nbElements, game->target_b, game->target_r);
-
-
+	distribuerCarteAleatoire(game->cartes, game->animaux->nbElements, game);
 	
-
+	
 }
 
 int gameLoop(Game* game)
@@ -83,54 +89,69 @@ int gameLoop(Game* game)
 		nom_j = strtok(ligne, " \t");
 		commande = strtok(NULL, " \t");
 
-		
 		Podium* podium_b = clonePodium(game->podium_b);
 		Podium* podium_r = clonePodium(game->podium_r);
-		if (peutJouer(game->joueurs, nom_j) == 1) {
-			if (!executerLigneCommandes(commande, podium_b, podium_r)) {
-				afficherResultats(game->joueurs);
-				break;
+		
+		if (!joueurExiste(game->joueurs, nom_j)) {
+			joueurJouePas();
+		}
+		
+		
+		else if (peutJouer(game->joueurs, nom_j) == 1) {
+			
+			int reponse = executerLigneCommandes(game->commandes,commande, podium_b, podium_r);
+			
+			if (reponse == 0) {
+				ordreExistePas();
+				
+			}
+			else if(reponse == 2 ) {
+				ordreErreur();
+			}
+			else {
+				Joueur* j = obtenirJoueurParNom(game->joueurs, nom_j);
+				j->tour = 0;
+				++nb_jouees;
+
+				if (comparer2Podiums(podium_b, game->target_b) == 1 && comparer2Podiums(podium_r, game->target_r) == 1) {
+					ajouterPointJoueur(game->joueurs, nom_j);
+					gagnerPoint(nom_j, 0);
+					nb_jouees = 0;
+
+					distribuerCarteAleatoire(game->cartes, game->animaux->nbElements, game);
+
+					printf("%d\n", j->points);
+				}
+
+				else {
+					ordreIncorect(nom_j);
+				}
+
+				if (nb_jouees == game->joueurs->nbElements - 1) {
+					nb_jouees = 0;
+					distribuerCarteAleatoire(game->cartes, game->animaux->nbElements, game);
+					Joueur* j = lastPerson(game->joueurs);
+					ajouterPointJoueur(game->joueurs, j->nom);
+					gagnerPoint(j->nom, 1);
+					remetreTours(game->joueurs);
+					
+				}
 			}
 
 			
-			if (comparer2Podiums(podium_b, game->target_b) == 1 && comparer2Podiums(podium_r, game->target_r) == 1) {
-				ajouterPointJoueur(game->joueurs, nom_j);
-				gagnerPoint(nom_j, 0);
 
-				int idx = choisirRandomCarte(game->cartes);
-				int* arr = obtenir(game->cartes, idx);
-
-				distrbuerAuxPodiums(arr, game->animaux->nbElements, game->podium_b, game->podium_r);
-
-				int idxs = choisirRandomCarte(game->cartes);
-				int* arrs = obtenir(game->cartes, idxs);
-
-				distrbuerAuxPodiums(arrs, game->animaux->nbElements, game->target_b, game->target_r);
-			}
-
-			else {
-				ordreIncorect(nom_j);
-			}
-
-			Joueur* j = obtenirJoueurParNom(game->joueurs, nom_j);
-			j->tour = 0;
-			++nb_jouees;
+			
 		
 		}
 		else {
 			printf("%s ne peut pas jouer\n", nom_j);
 		}
-		printf("%d ", nb_jouees);
-		printf("%d", game->joueurs->nbElements - 1);
-		if (nb_jouees == game->joueurs->nbElements-1) {
-			Joueur* j = lastPerson(game->joueurs);
-			ajouterPointJoueur(game->joueurs, j->nom);
-			gagnerPoint(j->nom, 1);
-		}
+		
+		
 		
 	}
 
-		free(ligne);
+	afficherResultats(game->joueurs);
 	
 
 	return 0;

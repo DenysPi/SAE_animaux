@@ -3,7 +3,6 @@
 #include "podium.h"
 #include "joueur.h"
 
-
 typedef struct {
 	char* nom_commande;
 }Commande;
@@ -23,5 +22,5 @@ int supprimerBas(Podium* p, int* adress_animal);
 
 
 int executerCommande(const char* nom, Podium* podium_b, Podium* podium_r);
-
-int executerLigneCommandes(const char* commandes, Podium* podium_b, Podium* podium_r);
+int verifierCommande(Commandes* commandes, char* commande);
+int executerLigneCommandes(Commandes* commandes,const char* com, Podium* podium_b, Podium* podium_r);

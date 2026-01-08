@@ -12,7 +12,18 @@ Commande* creerCommande(const char* nom) {
 int initCommandes(Commandes* commandes, int capacite) {
 	return initVecteur(commandes, capacite);
 }
+
+static int isAllowedCommande(const char* nom) {
+	if (!nom) return 0;
+	static const char* allowed[] = { "KI", "LO", "SO", "NI", "MA", NULL };
+	for (int i = 0; allowed[i] != NULL; ++i) {
+		if (strcmp(nom, allowed[i]) == 0) return 1;
+	}
+	return 0;
+}
+
 int ajouterCommande(Commandes* commandes, const char* nom) {
+	if (!isAllowedCommande(nom)) return 0;
 	Commande* c = creerCommande(nom);
 	ajouter(commandes, c);
 }
@@ -26,6 +37,9 @@ int ajouterHaut(Podium* p, int index_animal) {
 	return ajouter(p, it);
 }
 int supprimerHaut(Podium* p, int* address_animal) {
+	if (p->nbElements == 0) {
+		return 0;
+	}
 	int index_last = p->nbElements - 1;
 	if (index_last < 0) return 0;
 	int* it = (int*)obtenir(p, index_last);
@@ -37,12 +51,25 @@ int supprimerHaut(Podium* p, int* address_animal) {
 	
 }
 int supprimerBas(Podium* p, int* adress_animal) {
+	if (p->nbElements == 0) {
+		return 0;
+	}
 	int* it = (int*)obtenir(p, 0);
 	*adress_animal = *it;
 	free(it);
 	supprimer(p, 0);
 	return 1;
 
+}
+
+int verifierCommande(Commandes* commandes, char* commande) {
+	for (int i = 0; i < commandes->nbElements; ++i) {
+		Commande* c = obtenirCommande(commandes, i);
+		if (strcmp(c->nom_commande, commande)==0) {
+			return 1;
+		}
+	}
+	return 0;
 }
 
 /*
@@ -55,11 +82,14 @@ int supprimerBas(Podium* p, int* adress_animal) {
 int executerCommande(const char* nom, Podium* podium_b, Podium* podium_r) {
 
 	if (strcmp(nom, "KI") == 0) {
+		
 		int animal;
 		if (!supprimerHaut(podium_b, &animal))
+			
 			return 0;
 		if (!ajouterHaut(podium_r, animal))
 			return 0;
+		
 		return 1;
 	}
 	else if (strcmp(nom, "LO") == 0) {
@@ -105,19 +135,29 @@ int executerCommande(const char* nom, Podium* podium_b, Podium* podium_r) {
 	return 0;
 }
 
-int executerLigneCommandes(const char* commandes, Podium* podium_b, Podium* podium_r) {
-	if (strlen(commandes) % 2 != 0) {
-		return 0;
+int executerLigneCommandes(Commandes* commandes, const char* com, Podium* podium_b, Podium* podium_r) {
+	if (strlen(com) % 2 != 0) {
+		
+		return 2;
 	}
-	for (int i = 0; i < strlen(commandes); i += 2) {
+	for (int i = 0; i < strlen(com); i += 2) {
 		char commande[3];
-		commande[0] = commandes[i];
-		commande[1] = commandes[i + 1];
+		commande[0] = com[i];
+		commande[1] = com[i + 1];
 		commande[2] = '\0';
-
-		if (!executerCommande(commande, podium_b, podium_r)) {
+		
+		if (verifierCommande(commandes, commande)) {
+			
+			if (executerCommande(commande, podium_b, podium_r) == 0) {
+				
+				return 2;
+			}
+		}
+		else {
 			return 0;
 		}
+		
+		
 	}
 	return 1;
 }

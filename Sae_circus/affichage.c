@@ -26,17 +26,25 @@ void CommandesPresentes(Commandes* commandes) {
 	}
 	printf("\n\n");
 }
-void ordreExistePas(Commande* commande);
-void ordreIncorect(char* j) {
-	printf("La sequence ne conduit pas a la situation attendue -- %s ne peut plus jouer durant ce tour\n\n", j);
+void ordreExistePas() {
+	printf("Ordre n'existe pas\n");
 }
+
+void ordreErreur() {
+	printf("Impossible d'executer\n");
+}
+
+void ordreIncorect(Joueur* j) {
+	printf("La sequence ne conduit pas a la situation attendue -- %s ne peut plus jouer durant ce tour\n\n", j->nom);
+}
+
 void joueurPeutPasJouer(Joueur* j) {
 	printf("");
 }
 void afficherPodiums(Animaux* a, Podium* b, Podium* r, Podium* target_b, Podium* target_r) {
 	int max = maxTaillePodiums(b, r, target_b, target_r);
 	for (int niveau = max - 1; niveau >= 0; --niveau) {
-		/* Podium Bleu */
+		
 		if (niveau < b->nbElements) {
 			int* p = obtenir(b, niveau);
 			Animal* an = obtenirAnimal(a, *p);
@@ -48,7 +56,7 @@ void afficherPodiums(Animaux* a, Podium* b, Podium* r, Podium* target_b, Podium*
 
 		printf("  ");
 
-		/* Podium Rouge */
+		
 		if (r && niveau < r->nbElements) {
 			int* p = (int*)obtenir(r, niveau);
 			Animal* an = (p ? obtenirAnimal(a, *p) : NULL);
@@ -85,8 +93,9 @@ void afficherPodiums(Animaux* a, Podium* b, Podium* r, Podium* target_b, Podium*
 		printf("\n");
 	}
 	printf("---------------------------------------------------------------\n");
-	printf("%-12s  %-12s   %-12s  %-12s\n", "Bleu", "Rouge", "Bleu", "Target Rouge");
+	printf("%-12s  %-12s   %-12s  %-12s\n", "Bleu", "Rouge", "Bleu", "Rouge");
 }
+
 void gagnerPoint(char* j, int situation) {
 	if (situation == 0) {
 		printf("%s gagne un point\n", j);
@@ -94,4 +103,17 @@ void gagnerPoint(char* j, int situation) {
 	else {
 		printf("%s gagne un point car lui seul peut encore jouer durant ce tour\n", j);
 	}
+}
+
+
+void lancementErrorCommande() {
+	printf("A lancement du code, on n'a pas pu indentifier la commande\n");
+}
+
+void pasAssesDesJoueurs() {
+	printf("!!Verifier le nombre des joueurs!!\n");
+}
+
+void joueurJouePas() {
+	printf("Il n'existe pas de joueur avec ce nom ):\n");
 }

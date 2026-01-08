@@ -26,5 +26,5 @@ int peutJouer(const Joueurs* joueurs, char* nom);
 int joueurExiste(const Joueurs* joueurs, char* nom);
 
 void ajouterPointJoueur(Joueurs* joueurs, char* nom_j);
-
+void remetreTours(Joueurs* joueurs);
 Joueur* lastPerson(Joueurs* joueurs);

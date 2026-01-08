@@ -26,4 +26,7 @@ typedef struct {
 
 int initGameConfig(Game* game, const char* fichier, int nb_joueurs, char** noms);
 int gameLoop(Game* game); 
+
+
+void distribuerCarteAleatoire(Vecteur* cartes, int nb_animaux, Game* game);
 //void freeGame(Game* game);
