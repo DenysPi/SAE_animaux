@@ -1,18 +1,9 @@
-
 /**
  * @file joueur.h
- * @brief Gestion des joueurs : création, ajout, recherche, scoring et rotation des tours.
+ * @brief Gestion des joueurs : création, ajout, recherche et gestion des tours.
  *
- * Ce module définit :
- * - le type `Joueur` (nom, statut de tour, points),
- * - le conteneur `Joueurs` (alias de @ref Vecteur),
- * - les fonctions pour créer, initialiser, ajouter et obtenir des joueurs,
- * - les opérations de jeu : vérification d’existence, autorisation de jouer, attribution de points,
- *   réinitialisation des tours et recherche du dernier joueur actif.
- *
- * @note Les fonctions utilisent l’allocation dynamique pour le champ `nom` des joueurs.
- * @warning L’appelant doit libérer correctement la mémoire (chaque `nom` puis la structure `Joueur`)
- *          avant la destruction du conteneur `Joueurs` pour éviter les fuites.
+ * Ce module définit le type `Joueur`, le conteneur `Joueurs` et les fonctions
+ * permettant de créer, stocker et manipuler les joueurs et leurs scores.
  */
 
 #pragma once
@@ -22,115 +13,107 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "vecteur.h"
 
 /**
  * @brief Représente un joueur.
- *
- * Champs :
- * - `nom` : chaîne C allouée dynamiquement (nom du joueur),
- * - `tour` : indicateur (1 = peut jouer, 0 = ne peut pas jouer),
- * - `points` : score accumulé.
  */
 typedef struct {
-    char* nom;   ///< Nom du joueur (chaîne allouée dynamiquement).
-    int tour;    ///< Statut du tour (1 = actif, 0 = inactif).
-    int points;  ///< Nombre de points accumulés.
+    char* nom;
+    int tour;
+    int points;
 } Joueur;
 
 /**
  * @brief Conteneur de joueurs.
- *
- * Alias direct de @ref Vecteur. Selon la définition de `ItemV`, il stocke des `Joueur*`.
  */
 typedef Vecteur Joueurs;
 
 /**
- * @brief Crée un joueur avec un nom donné.
+ * @brief Crée un joueur à partir de son nom.
  *
- * @param[in] nom Chaîne C terminée par '\0' (nom du joueur).
- * @return Pointeur vers un `Joueur` initialisé (tour = 1, points = 0), ou `NULL` si mémoire insuffisante.
- * @pre `nom` non nul.
+ * @param[in] nom Nom du joueur.
+ * @return Un pointeur vers un joueur initialisé, ou `NULL` en cas d’erreur.
+ * @pre `nom` n’est pas `NULL`.
  */
 Joueur* creerJoueur(const char* nom);
 
 /**
- * @brief Initialise un conteneur de joueurs avec une capacité initiale.
+ * @brief Initialise un conteneur de joueurs.
  *
  * @param[out] joueurs Conteneur à initialiser.
- * @param[in]  capacite Capacité initiale (>= 1).
- * @return `1` si succès, `0` sinon.
- * @pre `joueurs` non nul ; `capacite >= 1`.
+ * @param[in] capacite Capacité initiale.
+ * @return `1` si l’initialisation réussit, `0` sinon.
+ * @pre `joueurs` n’est pas `NULL` et `capacite >= 1`.
  */
 int initJoueurs(Joueurs* joueurs, int capacite);
 
 /**
- * @brief Ajoute un joueur (par son nom) au conteneur.
+ * @brief Ajoute un joueur au conteneur.
  *
- * @param[in,out] joueurs Conteneur cible.
- * @param[in]     nom     Nom du joueur à ajouter.
- * @return `1` si succès, `0` sinon (mémoire insuffisante).
- * @pre `joueurs` initialisé ; `nom` non nul.
+ * @param[in,out] joueurs Conteneur de joueurs.
+ * @param[in] nom Nom du joueur.
+ * @return `1` si l’ajout réussit, `0` sinon.
+ * @pre `joueurs` est initialisé et `nom` n’est pas `NULL`.
  */
 int ajouterJoueur(Joueurs* joueurs, const char* nom);
 
 /**
- * @brief Obtient le joueur à l’indice `i`.
+ * @brief Accède à un joueur par son indice.
  *
- * @param[in] joueurs Conteneur source.
- * @param[in] i       Indice (0 ≤ i < taille(joueurs)).
- * @return Pointeur vers `Joueur` si présent, sinon `NULL`.
+ * @param[in] joueurs Conteneur de joueurs.
+ * @param[in] i Indice du joueur.
+ * @return Un pointeur vers le joueur ou `NULL` si l’indice est invalide.
  */
 Joueur* obtenirJoueur(const Joueurs* joueurs, int i);
 
 /**
  * @brief Recherche un joueur par son nom.
  *
- * @param[in] joueurs Conteneur source.
- * @param[in] nom     Nom à rechercher.
- * @return Pointeur vers `Joueur` si trouvé, sinon `NULL`.
+ * @param[in] joueurs Conteneur de joueurs.
+ * @param[in] nom Nom du joueur.
+ * @return Un pointeur vers le joueur ou `NULL` si non trouvé.
  */
 Joueur* obtenirJoueurParNom(const Joueurs* joueurs, const char* nom);
 
 /**
- * @brief Indique si un joueur peut jouer (tour actif).
+ * @brief Indique si un joueur est autorisé à jouer.
  *
- * @param[in] joueurs Conteneur source.
- * @param[in] nom     Nom du joueur.
- * @return `1` si le joueur existe et `tour == 1`, `0` sinon.
+ * @param[in] joueurs Conteneur de joueurs.
+ * @param[in] nom Nom du joueur.
+ * @return `1` si le joueur existe et peut jouer, `0` sinon.
  */
 int peutJouer(const Joueurs* joueurs, char* nom);
 
 /**
- * @brief Vérifie si un joueur existe dans le conteneur.
+ * @brief Indique si un joueur existe.
  *
- * @param[in] joueurs Conteneur source.
- * @param[in] nom     Nom du joueur.
- * @return `1` si trouvé, `0` sinon.
+ * @param[in] joueurs Conteneur de joueurs.
+ * @param[in] nom Nom du joueur.
+ * @return `1` si le joueur est trouvé, `0` sinon.
  */
 int joueurExiste(const Joueurs* joueurs, char* nom);
 
 /**
- * @brief Ajoute un point à un joueur et réactive son tour.
+ * @brief Ajoute un point à un joueur.
  *
- * @param[in,out] joueurs Conteneur source.
- * @param[in]     nom_j   Nom du joueur.
- * @pre Le joueur doit exister.
+ * @param[in,out] joueurs Conteneur de joueurs.
+ * @param[in] nom_j Nom du joueur.
+ * @pre Le joueur existe.
  */
 void ajouterPointJoueur(Joueurs* joueurs, char* nom_j);
 
 /**
- * @brief Réinitialise le statut de tour pour tous les joueurs (tous peuvent rejouer).
+ * @brief Réactive le tour de tous les joueurs.
  *
- * @param[in,out] joueurs Conteneur source.
+ * @param[in,out] joueurs Conteneur de joueurs.
  */
 void remetreTours(Joueurs* joueurs);
 
 /**
- * @brief Retourne le dernier joueur actif (tour == 1).
+ * @brief Retourne le dernier joueur actif.
  *
- * @param[in] joueurs Conteneur source.
- * @return Pointeur vers le joueur trouvé, ou `NULL` si aucun actif.
+ * @param[in] joueurs Conteneur de joueurs.
+ * @return Le joueur dont le tour est actif, ou `NULL` s’il n’y en a aucun.
  */
 Joueur* lastPerson(Joueurs* joueurs);
