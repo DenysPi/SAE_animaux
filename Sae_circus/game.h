@@ -1,99 +1,63 @@
-
 /**
  * @file game.h
- * @brief Boucle de jeu, configuration et distribution aléatoire des cartes/podiums.
+ * @brief Gestion de l’état du jeu, initialisation et boucle principale.
  *
- * Ce module centralise :
- * - la structure d’état du jeu (`Game`) : référentiels (animaux, commandes, joueurs),
- *   podiums courants (Bleu/Rouge), podiums cibles (Bleu/Rouge), et la collection de cartes ;
- * - l’initialisation complète d’une partie à partir d’un fichier de configuration et d’une liste de joueurs ;
- * - la boucle de jeu principale (lecture des ordres, exécution, scoring, rotation des tours) ;
- * - la distribution d’une carte aléatoire vers les podiums courants et les podiums cibles.
- *
- * @note Les dépendances incluent :
- *       - `commandes.h` (Commandes, exécution des ordres),
- *       - `affichage.h` (présentations et messages),
- *       - `config.h` (chargement config, I/O utilitaires),
- *       - `cartes.h` (génération/distribution de cartes),
- *       - `podium.h` (type Podium, opérations),
- *       - `joueur.h` (type Joueurs/Joueur, opérations).
+ * Ce module définit la structure `Game`, l’initialisation complète d’une partie
+ * et la boucle principale qui pilote les tours, l’exécution des commandes
+ * et la distribution des cartes.
  */
 
 #pragma once
 #pragma warning(disable:4996)
 
-
-
 #include "affichage.h"
 
-
 /**
- * @brief État global d’une partie.
- *
- * Contient les référentiels, les podiums courants/cibles et la collection de cartes
- * qui encode (split + permutation) la répartition des animaux.
+ * @brief Structure représentant l’état d’une partie.
  */
 typedef struct {
-    Animaux* animaux;   ///< Référentiel des animaux (alias de Vecteur contenant des `Animal*` selon ItemV).
-    Commandes* commandes; ///< Ensemble des commandes autorisées et disponibles.
-    Joueurs* joueurs;   ///< Ensemble des joueurs, leurs points et statut de tour.
-    Podium* podium_b;   ///< Podium Bleu courant.
-    Podium* podium_r;   ///< Podium Rouge courant.
+    Animaux* animaux;
+    Commandes* commandes;
+    Joueurs* joueurs;
 
-    Podium* target_b;   ///< Podium Bleu cible (objectif à atteindre).
-    Podium* target_r;   ///< Podium Rouge cible (objectif à atteindre).
+    Podium* podium_b;
+    Podium* podium_r;
 
-    Vecteur* cartes;    ///< Collection de cartes (`int*`), chacune: `arr[0]=split`, `arr[1..n]=permutation`.
+    Podium* target_b;
+    Podium* target_r;
+
+    Vecteur* cartes;
 } Game;
 
 /**
- * @brief Initialise l’état du jeu à partir d’un fichier de configuration et d’une liste de joueurs.
+ * @brief Initialise une partie à partir d’un fichier de configuration et d’une liste de joueurs.
  *
- * Effectue :
- * 1. L’allocation des sous-structures (`Animaux`, `Commandes`, `Joueurs`, `Podium`…).
- * 2. Le chargement de la configuration via @ref loadConfig (animaux + commandes).
- * 3. L’initialisation des joueurs via @ref loadJoueurs.
- * 4. L’initialisation des podiums (Bleu/Rouge + cibles) avec une capacité minimale.
- * 5. La création et le remplissage de `cartes` via @ref genererToutesLesCartes.
- * 6. La distribution initiale aléatoire sur les podiums courants et cibles.
- *
- * @param[in,out] game     État du jeu à initialiser (structure préalablement allouée).
- * @param[in]     fichier  Chemin du fichier de configuration.
- * @param[in]     nb_joueurs Nombre de joueurs à inscrire.
- * @param[in]     noms     Tableau de `nb_joueurs` noms (chaînes C).
- * @return `0` si succès ; `-1` en cas d’erreur (commande invalide, init podiums/joueurs/config échouée).
- * @pre `game` non nul ; `fichier` non nul ; `noms` non nul et de taille ≥ `nb_joueurs`.
+ * @param[in,out] game État du jeu à initialiser.
+ * @param[in] fichier Fichier de configuration.
+ * @param[in] nb_joueurs Nombre de joueurs.
+ * @param[in] noms Tableau contenant les noms des joueurs.
+ * @return `0` si l’initialisation réussit, `-1` sinon.
+ * @pre `game`, `fichier` et `noms` ne sont pas `NULL`.
  */
 int initGameConfig(Game* game, const char* fichier, int nb_joueurs, char** noms);
 
 /**
- * @brief Boucle principale du jeu : lecture des tours, exécution des commandes, scoring et rotation.
+ * @brief Lance la boucle principale du jeu.
  *
- * Fonctionnement (résumé) :
- * - Affiche les commandes présentes et l’état des podiums.
- * - Lit une ligne depuis l’entrée standard : `<nom_joueur> <sequence_commandes>` (chaîne de couples).
- * - Vérifie que le joueur existe et qu’il peut jouer ; clone les podiums courants.
- * - Valide et exécute la séquence via @ref executerLigneCommandes sur les clones.
- * - Si les clones correspondent aux podiums cibles (Bleu/Rouge), attribue un point au joueur,
- *   redistribue une carte aléatoire et réinitialise les tours si fin de rotation.
- * - Sinon, signale l’ordre incorrect et continue.
- * - À la fin (EOF), affiche les résultats via @ref afficherResultats.
- *
- * @param[in,out] game État du jeu (doit avoir été initialisé par @ref initGameConfig).
- * @return `0` à la fin normale ; autre code si gestion d’erreur personnalisée.
- * @pre `game` non nul ; toutes les sous-structures valides et initialisées.
-*
+ * @param[in,out] game État du jeu.
+ * @return `0` à la fin normale du jeu.
+ * @pre `game` est initialisé.
  */
 int gameLoop(Game* game);
 
 /**
- * @brief Distribue une carte aléatoire depuis `cartes` vers les podiums courants,
- *        et une carte aléatoire depuis `game->cartes` vers les podiums cibles.
+ * @brief Distribue aléatoirement des cartes vers les podiums courants et cibles.
  *
- * @param[in] cartes      Collection de cartes (`Vecteur` contenant des `int*` au format défini).
- * @param[in] nb_animaux  Taille de permutation pour les podiums courants.
- * @param[in,out] game    État du jeu (doit contenir podiums et `game->cartes` initialisés).
- * @pre `cartes` non nul et `cartes->nbElements > 0` ; `game` et ses podiums non nuls ;
+ * @param[in] cartes Collection de cartes pour les podiums courants.
+ * @param[in] nb_animaux Nombre total d’animaux.
+ * @param[in,out] game État du jeu.
+ * @pre `cartes` n’est pas `NULL`, `cartes->nbElements > 0` et `game` est initialisé.
  */
 void distribuerCarteAleatoire(Vecteur* cartes, int nb_animaux, Game* game);
+
 
