@@ -43,17 +43,24 @@ void joueurPeutPasJouer(Joueur* j) {
 }
 void afficherPodiums(Animaux* a, Podium* b, Podium* r, Podium* target_b, Podium* target_r) {
 	int max = maxTaillePodiums(b, r, target_b, target_r);
+
+	int max_bleu = trouverAnimalPlusLongue(a, b, 0);
+	int max_rouge = trouverAnimalPlusLongue(a, r, 1);
+	int max_target_bleu = trouverAnimalPlusLongue(a, target_b, 0);
+	int max_target_rouge = trouverAnimalPlusLongue(a, target_r, 1);
+	
+	
 	for (int niveau = max - 1; niveau >= 0; --niveau) {
-		int max_bleu = trouverAnimalPlusLongue(a, b, 0);
+		
 		
 		if (niveau < b->nbElements) {
 			int* p = obtenir(b, niveau);
 			Animal* an = obtenirAnimal(a, *p);
-			printf("%s", (an && an->nom_animal) ? an->nom_animal : "");
-			ajusterTaillePodium(max_bleu - strlen(an->nom_animal));
+			printf("%-*s", max_bleu+2, an->nom_animal);
+			
 		}
 		else {
-			ajusterTaillePodium(max_bleu);
+			printf("%-*s", max_bleu+2, "");
 		}
 
 		
@@ -62,40 +69,51 @@ void afficherPodiums(Animaux* a, Podium* b, Podium* r, Podium* target_b, Podium*
 		if (r && niveau < r->nbElements) {
 			int* p = (int*)obtenir(r, niveau);
 			Animal* an = (p ? obtenirAnimal(a, *p) : NULL);
-			printf("%-12s", (an && an->nom_animal) ? an->nom_animal : "");
+			printf("%-*s", max_rouge+6, an->nom_animal );
 		}
 		else {
-			printf("%-12s", "");
+			printf("%-*s",max_rouge+6, "");
 		}
 
-		printf(" || ");
+		
 
-		/* Target Bleu */
+		
 		if (target_b && niveau < target_b->nbElements) {
 			int* p = (int*)obtenir(target_b, niveau);
 			Animal* an = (p ? obtenirAnimal(a, *p) : NULL);
-			printf("%-12s", (an && an->nom_animal) ? an->nom_animal : "");
+			printf("%-*s", max_target_bleu+2, an->nom_animal);
 		}
 		else {
-			printf("%-12s", "");
+			printf("%-*s", max_target_bleu+2, "");
 		}
 
-		printf("   ");
+		
 
-		/* Target Rouge */
 		if (target_r && niveau < target_r->nbElements) {
 			int* p = (int*)obtenir(target_r, niveau);
 			Animal* an = (p ? obtenirAnimal(a, *p) : NULL);
-			printf("%-12s", (an && an->nom_animal) ? an->nom_animal : "");
+			printf("%-*s", max_target_rouge+2, an->nom_animal);
 		}
 		else {
-			printf("%-12s", "");
+			printf("%-*s", max_target_rouge+2, "");
 		}
 
 		printf("\n");
 	}
-	printf("---------------------------------------------------------------\n");
-	printf("%-12s  %-12s   %-12s  %-12s\n", "Bleu", "Rouge", "Bleu", "Rouge");
+	printf(
+		"%-*s%-*s%-*s%-*s%-*s\n",
+		max_bleu + 2, "----",
+		max_rouge + 2, "----",
+		4, "=>",
+		max_target_bleu + 2, "----",
+		max_target_rouge + 2, "----"
+	);
+	printf("%-*s%-*s%-*s%-*s\n",
+		max_bleu + 2, "BLEU",
+		max_rouge + 6, "ROUGE",
+		max_target_bleu + 2, "BLEU",
+		max_target_rouge + 2, "ROUGE");
+	
 }
 
 void gagnerPoint(char* j, int situation) {

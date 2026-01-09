@@ -8,10 +8,6 @@
  * - des fonctions pour initialiser et manipuler un podium,
  * - des utilitaires pour comparer, cloner, vider et libérer un podium,
  * - des fonctions pour déterminer la taille maximale parmi plusieurs podiums et remplacer un contenu.
- *
- * @note Chaque élément ajouté au podium est un pointeur vers un entier (`int*`) alloué dynamiquement.
- * @warning L’appelant doit libérer correctement la mémoire (via @ref freePodium ou @ref clearPodium)
- *          pour éviter les fuites.
  */
 
 #pragma once
@@ -44,7 +40,6 @@ int initPodium(Podium* p, int capacite);
  * @param[in,out] p            Podium cible.
  * @param[in]     index_animal Index de l’animal à ajouter.
  * @return `1` si succès, `0` sinon (mémoire insuffisante).
- * @post Alloue un `int*` et l’ajoute au vecteur.
  */
 int ajouterPodiumAnimal(Podium* p, int index_animal);
 
@@ -53,7 +48,6 @@ int ajouterPodiumAnimal(Podium* p, int index_animal);
  *
  * @param[in,out] p            Podium cible.
  * @param[in]     index_animal Position (indice) à supprimer.
- * @note Ne libère pas la mémoire associée à l’élément supprimé (prévoir @ref clearPodium ou @ref freePodium).
  */
 void supprimerPodiumAnimal(Podium* p, int index_animal);
 
@@ -80,7 +74,7 @@ int comparer2Podiums(Podium* p_1, Podium* p_2);
  *
  * @param[in] src Podium source.
  * @return Nouveau podium alloué et rempli, ou `NULL` si échec.
- * @note Chaque élément est recopié (nouveau `int*`).
+
  */
 Podium* clonePodium(const Podium* src);
 
@@ -88,7 +82,7 @@ Podium* clonePodium(const Podium* src);
  * @brief Libère complètement un podium (contenu + vecteur).
  *
  * @param[in,out] p Podium à libérer.
- * @post Tous les `int*` sont libérés, puis le vecteur est détruit.
+
  */
 void freePodium(Podium* p);
 
@@ -96,7 +90,7 @@ void freePodium(Podium* p);
  * @brief Vide un podium sans le détruire.
  *
  * @param[in,out] p Podium à vider.
- * @post Tous les `int*` sont libérés ; `nbElements = 0`.
+
  */
 void clearPodium(Podium* p);
 
@@ -117,14 +111,24 @@ int maxTaillePodiums(const Podium* p_b, const Podium* p_r, const Podium* t_b, co
  * @param[in,out] dest Podium destination (vidé avant copie).
  * @param[in]     src  Podium source.
  * @return `1` si succès.
- * @post Chaque élément est recopié (nouveau `int*`).
+
  */
 int remplacerContenuPodium(Podium* dest, const Podium* src);
 
 
-//#################################
+/**
+ * @brief Trouve la longueur du nom d'animal le plus long dans un podium.
+ *
+ * Parcourt tous les animaux présents dans le podium donné et retourne
+ * la longueur (en caractères) du nom le plus long trouvé.
+ *
+ * @param[in] animaux Pointeur vers la structure contenant tous les animaux.
+ * @param[in] podium  Pointeur vers le podium à analyser.
+ * @param[in] type    Type du podium (0 pour Bleu, 1 pour Rouge).
+ * @return Longueur du nom d'animal le plus long, ou 0 si le podium est vide.
+ */
 
 int trouverAnimalPlusLongue(Animaux* animaux, Podium* podium, int type);
 
 
-int ajusterTaillePodium(int espace);
+

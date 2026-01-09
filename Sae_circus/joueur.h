@@ -52,8 +52,6 @@ typedef Vecteur Joueurs;
  * @param[in] nom Chaîne C terminée par '\0' (nom du joueur).
  * @return Pointeur vers un `Joueur` initialisé (tour = 1, points = 0), ou `NULL` si mémoire insuffisante.
  * @pre `nom` non nul.
- * @post Le champ `nom` est alloué et copié ; `tour = 1`, `points = 0`.
- * @note L’appelant doit libérer `nom` puis la structure `Joueur` via `free()`.
  */
 Joueur* creerJoueur(const char* nom);
 
@@ -74,7 +72,6 @@ int initJoueurs(Joueurs* joueurs, int capacite);
  * @param[in]     nom     Nom du joueur à ajouter.
  * @return `1` si succès, `0` sinon (mémoire insuffisante).
  * @pre `joueurs` initialisé ; `nom` non nul.
- * @post Le joueur est créé via @ref creerJoueur et ajouté au vecteur.
  */
 int ajouterJoueur(Joueurs* joueurs, const char* nom);
 
@@ -120,7 +117,6 @@ int joueurExiste(const Joueurs* joueurs, char* nom);
  * @param[in,out] joueurs Conteneur source.
  * @param[in]     nom_j   Nom du joueur.
  * @pre Le joueur doit exister.
- * @post `points` est incrémenté ; `tour` est remis à 1.
  */
 void ajouterPointJoueur(Joueurs* joueurs, char* nom_j);
 
@@ -128,7 +124,6 @@ void ajouterPointJoueur(Joueurs* joueurs, char* nom_j);
  * @brief Réinitialise le statut de tour pour tous les joueurs (tous peuvent rejouer).
  *
  * @param[in,out] joueurs Conteneur source.
- * @post Chaque joueur a `tour = 1`.
  */
 void remetreTours(Joueurs* joueurs);
 

@@ -63,15 +63,6 @@ typedef struct {
  * @param[in]     noms     Tableau de `nb_joueurs` noms (chaînes C).
  * @return `0` si succès ; `-1` en cas d’erreur (commande invalide, init podiums/joueurs/config échouée).
  * @pre `game` non nul ; `fichier` non nul ; `noms` non nul et de taille ≥ `nb_joueurs`.
- * @post `game` est complètement initialisé et prêt pour @ref gameLoop.
- * @warning Ce module **alloue dynamiquement** toutes les sous-structures.
- *          Prévoir une fonction de destruction (`freeGame`) pour libérer :
- *          - chaque `Animal` (nom + struct) si stocké par pointeur,
- *          - chaque `Commande` (nom + struct) si stocké par pointeur,
- *          - chaque carte (`int*`) contenue dans `cartes`,
- *          - chaque `Podium` et son contenu,
- *          - puis les conteneurs (`detruireVecteur`) et la structure `Game`.
- * @sa loadConfig(), loadJoueurs(), initPodium(), genererToutesLesCartes(), distribuerCarteAleatoire()
  */
 int initGameConfig(Game* game, const char* fichier, int nb_joueurs, char** noms);
 
@@ -91,8 +82,7 @@ int initGameConfig(Game* game, const char* fichier, int nb_joueurs, char** noms)
  * @param[in,out] game État du jeu (doit avoir été initialisé par @ref initGameConfig).
  * @return `0` à la fin normale ; autre code si gestion d’erreur personnalisée.
  * @pre `game` non nul ; toutes les sous-structures valides et initialisées.
- * @note La lecture utilise @ref readFullLine ; la comparaison des podiums s’appuie sur `comparer2Podiums`.
- * @sa executerLigneCommandes(), afficherPodiums(), afficherResultats()
+*
  */
 int gameLoop(Game* game);
 
@@ -104,23 +94,6 @@ int gameLoop(Game* game);
  * @param[in] nb_animaux  Taille de permutation pour les podiums courants.
  * @param[in,out] game    État du jeu (doit contenir podiums et `game->cartes` initialisés).
  * @pre `cartes` non nul et `cartes->nbElements > 0` ; `game` et ses podiums non nuls ;
- *      `game->cartes->nbElements > 0`.
- * @post Les podiums `game->podium_b/r` et `game->target_b/r` sont vidés puis remplis
- *       selon les deux cartes aléatoires.
- * @note Choix aléatoire via @ref choisirRandomCarte ; distribution via @ref distrbuerAuxPodiums.
- * @warning Les cartes sont des tableaux alloués dynamiquement (`int*`) ajoutés au vecteur.
- *          Ne pas oublier de les libérer lors de la destruction de `game`.
  */
 void distribuerCarteAleatoire(Vecteur* cartes, int nb_animaux, Game* game);
-
-// /**
-//  * @brief Libère proprement toutes les ressources associées à un `Game`.
-//  *
-// //  À implémenter : itérer et libérer les éléments dynamiques (animaux, commandes, cartes),
-//  //  détruire les vecteurs/podiums/joueurs, puis libérer les pointeurs de `Game`.
-//  //  @param[in,out] game État du jeu à détruire.
-//  //  @pre `game` non nul.
-//  //  @post Toutes les ressources sont libérées ; pointeurs mis à NULL (si souhaité).
-//  */
-// // void freeGame(Game* game);
 

@@ -106,19 +106,13 @@ int trouverAnimalPlusLongue(Animaux* animaux, Podium* podium, int type) {
 		max = 5;
 	}
 	for (int i = 0; i < podium->nbElements; ++i) {
-		Animal* a = obtenirAnimal(animaux, i);
+		int* animal_id = obtenir(podium, i);
+		Animal* a = obtenirAnimal(animaux, *animal_id);
 		int taille_a = strlen(a->nom_animal);
-		
 		if (taille_a > max) {
 			max = taille_a;
 		}
 	}
 	
 	return max;
-}
-
-int ajusterTaillePodium(int espace) {
-	for (int i = 0; i < espace+2; ++i) {
-		printf(" ");
-	}
 }
