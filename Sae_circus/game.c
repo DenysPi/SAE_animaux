@@ -112,8 +112,9 @@ int gameLoop(Game* game)
 				Joueur* j = obtenirJoueurParNom(game->joueurs, nom_j);
 				j->tour = 0;
 				++nb_jouees;
-
+				
 				if (comparer2Podiums(podium_b, game->target_b) == 1 && comparer2Podiums(podium_r, game->target_r) == 1) {
+					
 					ajouterPointJoueur(game->joueurs, nom_j);
 					gagnerPoint(nom_j, 0);
 					nb_jouees = 0;
@@ -124,7 +125,8 @@ int gameLoop(Game* game)
 				}
 
 				else {
-					ordreIncorect(nom_j);
+					
+					ordreIncorect(j);
 				}
 
 				if (nb_jouees == game->joueurs->nbElements - 1) {

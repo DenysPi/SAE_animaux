@@ -7,7 +7,7 @@
 
 
 #include "animal.h"
-#include "vecteur.h"
+
 
 typedef Vecteur Podium;
 

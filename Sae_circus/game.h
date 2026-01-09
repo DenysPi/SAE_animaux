@@ -4,10 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "commandes.h"
 #include "affichage.h"
-#include "config.h"
-#include "cartes.h"
+
 
 
 typedef struct {

@@ -4,14 +4,11 @@
 
 
 #include <stdio.h>
+#include "cartes.h"
 
-#include "animal.h"
-#include "commandes.h"
-#include "joueur.h"
+
 
 int loadJoueurs(Joueurs* joueurs, int nb_joueurs, char** noms);
 int loadConfig(const char* fichier, Animaux* a, Commandes* c);
 char** splitLineAndCount(char* line, int* count);
 char* readFullLine(FILE* f);
-
-Podium* max4(Podium* p_b, Podium* p_r, Podium* t_b, Podium* t_r);
