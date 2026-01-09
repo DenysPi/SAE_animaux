@@ -1,6 +1,6 @@
-#include "game.h"
-#include "affichage.h"
 
+
+#include "game.h"
 
 
 
@@ -91,7 +91,8 @@ int gameLoop(Game* game)
 
 		Podium* podium_b = clonePodium(game->podium_b);
 		Podium* podium_r = clonePodium(game->podium_r);
-		
+
+		Joueur* j = obtenirJoueurParNom(game->joueurs, nom_j);
 		if (!joueurExiste(game->joueurs, nom_j)) {
 			joueurJouePas();
 		}
@@ -109,7 +110,7 @@ int gameLoop(Game* game)
 				ordreErreur();
 			}
 			else {
-				Joueur* j = obtenirJoueurParNom(game->joueurs, nom_j);
+				
 				j->tour = 0;
 				++nb_jouees;
 				
@@ -121,7 +122,6 @@ int gameLoop(Game* game)
 
 					distribuerCarteAleatoire(game->cartes, game->animaux->nbElements, game);
 
-					printf("%d\n", j->points);
 				}
 
 				else {
@@ -146,7 +146,7 @@ int gameLoop(Game* game)
 		
 		}
 		else {
-			printf("%s ne peut pas jouer\n", nom_j);
+			joueurPeutPasJouer(j);
 		}
 		
 		

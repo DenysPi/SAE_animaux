@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "vecteur.h"
-#include "podium.h"
+
+#include "commandes.h"
 // Recommandé pour la définition du type Animaux (alias de Vecteur dans ton projet).
 // #include "animal.h"
 

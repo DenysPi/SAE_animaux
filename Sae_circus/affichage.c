@@ -27,11 +27,11 @@ void CommandesPresentes(Commandes* commandes) {
 	printf("\n\n");
 }
 void ordreExistePas() {
-	printf("Ordre n'existe pas\n");
+	printf("Ordre n'existe pas\n\n");
 }
 
 void ordreErreur() {
-	printf("Impossible d'executer\n");
+	printf("Impossible d'executer\n\n");
 }
 
 void ordreIncorect(Joueur* j) {
@@ -39,7 +39,7 @@ void ordreIncorect(Joueur* j) {
 }
 
 void joueurPeutPasJouer(Joueur* j) {
-	printf("");
+	printf("%s ne peut pas jouer\n", j->nom);
 }
 void afficherPodiums(Animaux* a, Podium* b, Podium* r, Podium* target_b, Podium* target_r) {
 	int max = maxTaillePodiums(b, r, target_b, target_r);
