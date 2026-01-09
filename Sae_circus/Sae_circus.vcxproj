@@ -145,6 +145,7 @@
     <ClCompile Include="joueur.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="podium.c" />
+    <ClCompile Include="test.c" />
     <ClCompile Include="vecteur.c" />
   </ItemGroup>
   <ItemGroup>

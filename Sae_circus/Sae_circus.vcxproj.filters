@@ -74,6 +74,9 @@
     <ClCompile Include="cartes.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="test.c">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="crazy.cfg" />
