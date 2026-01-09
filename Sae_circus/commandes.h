@@ -1,22 +1,12 @@
-
 /**
  * @file commandes.h
- * @brief Définition du type Commande et opérations de gestion/exécution des commandes.
+ * @brief Définition du type Commande et gestion de l’exécution des commandes.
  *
- * Ce module introduit le type élémentaire `Commande` (nom abrégé de commande),
- * un conteneur `Commandes` (alias de @ref Vecteur) et les opérations pour :
- * - créer/initialiser/ajouter/obtenir des commandes,
- * - manipuler le sommet et la base des podiums,
- * - vérifier et exécuter une commande unitaire,
- * - exécuter une ligne de commandes composée de couples de lettres.
+ * Ce module définit le type `Commande`, le type `Commandes` (conteneur basé sur `Vecteur`)
+ * et les opérations permettant de créer, stocker, vérifier et exécuter des commandes
+ * sur deux podiums (Bleu et Rouge).
  *
- * Les commandes prises en charge sont : **KI**, **LO**, **SO**, **NI**, **MA**.
- *
- * @note Les types `Podium`, `Joueur` et `Vecteur` sont déclarés respectivement
- *       dans `podium.h`, `joueur.h` et `vecteur.h`.
- * @warning Gestion mémoire : `Commandes` stocke (selon `ItemV`) des `Commande*`.
- *          Si c’est le cas, chaque `Commande` (et son `nom_commande`) doit être libérée
- *          avant la destruction du vecteur, pour éviter les fuites.
+ * Les commandes reconnues sont : KI, LO, SO, NI et MA.
  */
 
 #pragma once
@@ -25,146 +15,124 @@
 #include "joueur.h"
 
 /**
- * @brief Représente une commande (son nom abrégé).
- *
- * Exemple de valeurs valides : "KI", "LO", "SO", "NI", "MA".
+ * @brief Représente une commande par son code abrégé.
  */
 typedef struct {
-    char* nom_commande; /**< Chaîne C allouée dynamiquement contenant le code de la commande. */
+    char* nom_commande;
 } Commande;
 
 /**
  * @brief Conteneur de commandes.
- *
- * Alias direct de @ref Vecteur. Vérifier la définition de `ItemV` :
- * - si `ItemV` == `Commande*`, le conteneur stocke des pointeurs,
- * - si `ItemV` == `Commande`, le stockage est par valeur.
  */
 typedef Vecteur Commandes;
 
 /**
- * @brief Crée une commande en allouant et copiant son nom.
+ * @brief Crée une commande à partir de son nom.
  *
- * @param[in] nom Chaîne C terminée par '\0' (ex. "KI").
- * @return Pointeur vers une `Commande` initialisée en cas de succès, `NULL` si mémoire insuffisante.
- * @pre `nom` doit être non nul et pointer vers une chaîne valide.
- * @post `c->nom_commande` alloué dynamiquement et contenant une copie de `nom`.
- * @note L’appelant est responsable de `free(c->nom_commande)` puis `free(c)`.
+ * @param[in] nom Code de la commande (ex. "KI").
+ * @return Un pointeur vers une commande initialisée ou `NULL` en cas d’erreur.
+ * @pre `nom` n’est pas `NULL`.
  */
 Commande* creerCommande(const char* nom);
 
 /**
- * @brief Initialise un conteneur de commandes (vecteur) avec une capacité initiale.
+ * @brief Initialise un conteneur de commandes.
  *
- * @param[out] commandes Adresse du conteneur à initialiser.
- * @param[in]  capacite  Capacité initiale (>= 1).
- * @return `1` en cas de succès, `0` en cas de mémoire insuffisante.
- * @pre `commandes` non nul ; `capacite >= 1`.
- * @post Vecteur interne alloué, `nbElements == 0`.
+ * @param[out] commandes Conteneur à initialiser.
+ * @param[in] capacite Capacité initiale.
+ * @return `1` si l’initialisation réussit, `0` sinon.
+ * @pre `commandes` n’est pas `NULL` et `capacite >= 1`.
  */
 int initCommandes(Commandes* commandes, int capacite);
 
 /**
- * @brief Ajoute une commande (par son nom) au conteneur si elle est autorisée.
+ * @brief Ajoute une commande autorisée au conteneur.
  *
- * Les commandes autorisées sont : "KI", "LO", "SO", "NI", "MA".
- *
- * @param[in,out] commandes Conteneur de commandes initialisé.
- * @param[in]     nom       Nom abrégé de la commande à ajouter.
- * @return `1` si l’ajout a réussi, `0` sinon (commande non autorisée ou mémoire insuffisante).
- * @pre `commandes` initialisé ; `nom` non nul.
- * @post `nbElements` est incrémenté si succès.
- * @note Dans l’implémentation actuelle (`commandes.c`), la fonction **ne retourne pas** de valeur.
- *       Il faut ajouter un `return` approprié (par ex. `return ajouter(commandes, c);` ou `return 1`).
- * @sa creerCommande(), verifierCommande()
+ * @param[in,out] commandes Conteneur de commandes.
+ * @param[in] nom Code de la commande à ajouter.
+ * @return `1` si l’ajout réussit, `0` sinon.
+ * @pre `commandes` est initialisé et `nom` n’est pas `NULL`.
  */
 int ajouterCommande(Commandes* commandes, const char* nom);
 
 /**
- * @brief Obtient la `Commande` à l’indice `i`.
+ * @brief Récupère une commande à partir de son indice.
  *
- * @param[in] commandes Conteneur source.
- * @param[in] i         Indice (0 ≤ i < taille(commandes)).
- * @return Pointeur vers `Commande` si présent, sinon `NULL`.
- * @pre `commandes` initialisé et contient au moins `i+1` éléments.
+ * @param[in] commandes Conteneur de commandes.
+ * @param[in] i Indice de la commande.
+ * @return Un pointeur vers la commande ou `NULL` si l’indice est invalide.
+ * @pre `commandes` est initialisé et `0 ≤ i < taille(commandes)`.
  */
 Commande* obtenirCommande(const Commandes* commandes, int i);
 
 /**
- * @brief Ajoute en haut du podium l’index d’un animal.
+ * @brief Empile un animal au sommet d’un podium.
  *
- * @param[in,out] p            Podium cible.
- * @param[in]     index_animal Index d’animal à empiler.
- * @return `1` si réussite, `0` sinon (mémoire insuffisante).
- * @post Le sommet du podium contient le nouvel index.
+ * @param[in,out] p Podium cible.
+ * @param[in] index_animal Indice de l’animal.
+ * @return `1` si l’opération réussit, `0` sinon.
  */
 int ajouterHaut(Podium* p, int index_animal);
 
 /**
- * @brief Supprime l’index au sommet du podium et le renvoie par adresse.
+ * @brief Retire l’animal situé au sommet d’un podium.
  *
- * @param[in,out] p               Podium cible.
- * @param[out]    address_animal  Adresse recevant l’index retiré.
- * @return `1` si réussite, `0` si le podium est vide ou erreur.
- * @post Le sommet est retiré ; `*address_animal` reçoit l’index.
+ * @param[in,out] p Podium cible.
+ * @param[out] address_animal Adresse recevant l’indice retiré.
+ * @return `1` si l’opération réussit, `0` sinon.
  */
 int supprimerHaut(Podium* p, int* address_animal);
 
 /**
- * @brief Supprime l’index en bas du podium et le renvoie par adresse.
+ * @brief Retire l’animal situé à la base d’un podium.
  *
- * @param[in,out] p             Podium cible.
- * @param[out]    adress_animal Adresse recevant l’index retiré.
- * @return `1` si réussite, `0` si le podium est vide ou erreur.
- * @post La base est retirée ; `*adress_animal` reçoit l’index.
+ * @param[in,out] p Podium cible.
+ * @param[out] adress_animal Adresse recevant l’indice retiré.
+ * @return `1` si l’opération réussit, `0` sinon.
  */
 int supprimerBas(Podium* p, int* adress_animal);
 
 /**
- * @brief Exécute une commande unitaire sur les deux podiums.
+ * @brief Exécute une commande sur les deux podiums.
  *
- * Sémantique :
- * - `KI` : Haut Bleu → Haut Rouge
- * - `LO` : Haut Rouge → Haut Bleu
- * - `SO` : Échange des Hauts (Rouge ↔ Bleu)
- * - `NI` : Bas Bleu → Haut Bleu
- * - `MA` : Bas Rouge → Haut Rouge
+ * Les commandes effectuent les mouvements suivants :
+ * - KI : Haut Bleu → Haut Rouge  
+ * - LO : Haut Rouge → Haut Bleu  
+ * - SO : échange des deux sommets  
+ * - NI : Bas Bleu → Haut Bleu  
+ * - MA : Bas Rouge → Haut Rouge
  *
- * @param[in] nom       Nom de la commande (ex. "KI").
+ * @param[in] nom Code de la commande.
  * @param[in,out] podium_b Podium Bleu.
  * @param[in,out] podium_r Podium Rouge.
- * @return `1` si exécution réussie, `0` sinon (mouvement impossible ou commande inconnue).
- * @pre `nom` non nul ; `podium_b`/`podium_r` valides.
- * @warning Dans l’implémentation actuelle, la clause `else if (strcmp(nom, "Q"))` devrait
- *          être `else if (strcmp(nom, "Q") == 0)` si "Q" est une commande à interdire/arrêter.
+ * @return `1` si la commande est exécutée, `0` sinon.
+ * @pre `nom` n’est pas `NULL`.
  */
 int executerCommande(const char* nom, Podium* podium_b, Podium* podium_r);
 
 /**
- * @brief Vérifie si une commande est présente dans le conteneur.
+ * @brief Indique si une commande est présente dans le conteneur.
  *
  * @param[in] commandes Conteneur de commandes.
- * @param[in] commande  Chaîne C (ex. "KI").
- * @return `1` si présente, `0` sinon.
- * @pre `commandes` initialisé ; `commande` non nul.
+ * @param[in] commande Code de la commande.
+ * @return `1` si la commande est trouvée, `0` sinon.
+ * @pre `commandes` est initialisé et `commande` n’est pas `NULL`.
  */
 int verifierCommande(Commandes* commandes, char* commande);
 
 /**
- * @brief Exécute une ligne de commandes (couples de lettres successifs).
+ * @brief Exécute une suite de commandes codées par paires de lettres.
  *
- * La ligne `com` doit contenir un nombre **pair** de caractères ; chaque couple (2 lettres)
- * représente une commande (ex. `"KILO"` → `KI`, `LO`).
+ * Chaque paire de caractères de `com` représente une commande.
  *
  * @param[in] commandes Conteneur des commandes autorisées.
- * @param[in] com       Chaîne C contenant la séquence (longueur paire).
+ * @param[in] com Chaîne contenant la séquence de commandes.
  * @param[in,out] podium_b Podium Bleu.
  * @param[in,out] podium_r Podium Rouge.
  * @return
- *   - `1` si toute la séquence a été exécutée avec succès,
- *   - `0` s’il existe un couple inconnu/non autorisé,
- *   - `2` si la longueur est **impair** ou si l’exécution d’un couple échoue (mouvement impossible).
- * @pre `commandes` initialisé ; `com` non nul.
- * @note Chaque couple est vérifié avec @ref verifierCommande avant exécution par @ref executerCommande.
+ *   - `1` si toutes les commandes sont exécutées avec succès,
+ *   - `0` si une commande n’est pas autorisée,
+ *   - `2` si la chaîne est invalide ou si une exécution échoue.
+ * @pre `commandes` est initialisé et `com` n’est pas `NULL`.
  */
 int executerLigneCommandes(Commandes* commandes, const char* com, Podium* podium_b, Podium* podium_r);
