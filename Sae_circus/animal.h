@@ -36,10 +36,6 @@ typedef struct {
  * les éléments du vecteur peuvent être :
  * - des **pointeurs** vers `Animal` (cas le plus courant ici), ou
  * - des `Animal` **par valeur**.
- *
- * @note Vérifier la définition de `ItemV` utilisée par le projet pour savoir
- *       si le stockage se fait par valeur ou par pointeur. Les fonctions
- *       de ce module sont écrites pour un stockage **par pointeur** (`Animal*`).
  */
 typedef Vecteur Animaux;
 
@@ -50,10 +46,6 @@ typedef Vecteur Animaux;
  * @return Pointeur vers un `Animal` initialisé en cas de succès,
  *         `NULL` si la mémoire est insuffisante ou si `nom` est `NULL`.
  * @pre `nom` doit être non nul et pointer vers une chaîne valide.
- * @post `a->nom_animal` est alloué dynamiquement et contient une copie de `nom`.
- *
- * @note L’appelant est responsable de la libération de la mémoire :
- *       d’abord `free(a->nom_animal)`, puis `free(a)`.
  */
 Animal* creerAnimal(const char* nom);
 

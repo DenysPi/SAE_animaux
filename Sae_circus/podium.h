@@ -120,3 +120,11 @@ int maxTaillePodiums(const Podium* p_b, const Podium* p_r, const Podium* t_b, co
  * @post Chaque élément est recopié (nouveau `int*`).
  */
 int remplacerContenuPodium(Podium* dest, const Podium* src);
+
+
+//#################################
+
+int trouverAnimalPlusLongue(Animaux* animaux, Podium* podium, int type);
+
+
+int ajusterTaillePodium(int espace);

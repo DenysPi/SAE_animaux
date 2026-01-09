@@ -78,6 +78,10 @@ int gameLoop(Game* game)
 	
 	CommandesPresentes(game->commandes);
 	while (1) {
+		printf("%d\n", trouverAnimalPlusLongue(game->animaux, game->podium_b, 0));
+		printf("%d\n", trouverAnimalPlusLongue(game->animaux, game->podium_r, 1));
+		printf("%d\n", trouverAnimalPlusLongue(game->animaux, game->target_b, 0));
+		printf("%d\n", trouverAnimalPlusLongue(game->animaux, game->target_r, 1));
 		afficherPodiums(game->animaux, game->podium_b, game->podium_r, game->target_b, game->target_r);
 		ligne = readFullLine(stdin);
 		if (!ligne) {

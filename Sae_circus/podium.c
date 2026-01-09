@@ -94,3 +94,31 @@ int remplacerContenuPodium(Podium* dest, const Podium* src) {
 	return 1;
 }
 
+
+//#################################
+
+int trouverAnimalPlusLongue(Animaux* animaux, Podium* podium, int type) {
+	int max;
+	if (type == 0) {
+		max = 4;
+	}
+	else {
+		max = 5;
+	}
+	for (int i = 0; i < podium->nbElements; ++i) {
+		Animal* a = obtenirAnimal(animaux, i);
+		int taille_a = strlen(a->nom_animal);
+		
+		if (taille_a > max) {
+			max = taille_a;
+		}
+	}
+	
+	return max;
+}
+
+int ajusterTaillePodium(int espace) {
+	for (int i = 0; i < espace+2; ++i) {
+		printf(" ");
+	}
+}

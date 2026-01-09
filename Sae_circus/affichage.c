@@ -44,17 +44,19 @@ void joueurPeutPasJouer(Joueur* j) {
 void afficherPodiums(Animaux* a, Podium* b, Podium* r, Podium* target_b, Podium* target_r) {
 	int max = maxTaillePodiums(b, r, target_b, target_r);
 	for (int niveau = max - 1; niveau >= 0; --niveau) {
+		int max_bleu = trouverAnimalPlusLongue(a, b, 0);
 		
 		if (niveau < b->nbElements) {
 			int* p = obtenir(b, niveau);
 			Animal* an = obtenirAnimal(a, *p);
-			printf("%-12s", (an && an->nom_animal) ? an->nom_animal : "");
+			printf("%s", (an && an->nom_animal) ? an->nom_animal : "");
+			ajusterTaillePodium(max_bleu - strlen(an->nom_animal));
 		}
 		else {
-			printf("%-12s", "");
+			ajusterTaillePodium(max_bleu);
 		}
 
-		printf("  ");
+		
 
 		
 		if (r && niveau < r->nbElements) {
